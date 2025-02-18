@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder  # Preprocessing 
 
 # Function to load the pre-trained model, scaler, and label encoder
 def load_model():
-    with open('Linear_Regression_Model.pkl', 'rb') as file:  # Load the model file
+    with open('Linear_Regression_model.pkl', 'rb') as file:  # Load the model file
         model, scaler, le = pickle.load(file)  # Unpack the saved model, scaler, and encoder
     return model, scaler, le  # Return the loaded objects
 
