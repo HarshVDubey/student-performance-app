@@ -3,7 +3,14 @@ import pandas as pd  # Pandas for data handling
 import numpy as np  # NumPy for numerical operations
 import pickle  # Pickle to load the trained model
 from sklearn.preprocessing import StandardScaler, LabelEncoder  # Preprocessing utilities
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
+uri = "mongodb+srv://harsh:zEVAFSZ6d8#NGYz@cluster0.1taty.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(uri, server_api=ServerApi('1'))
+
+db = client['student']  #creating a database
+collection = db['student_pred']  #creating a collection within the database
 # Function to load the pre-trained model, scaler, and label encoder
 def load_model():
     with open('Linear_Regression_model.pkl', 'rb') as file:  # Load the model file
@@ -30,6 +37,7 @@ def main():
     st.title("Student Performance Prediction")  # App title
     st.write("Enter your details to get a prediction for your score.")  # Description
 
+
     # Collect user input values
     hour_studied = st.number_input("Hours studied", min_value=1, max_value=10, value=5)
     Previous_Scores = st.number_input("Previous Scores", min_value=40, max_value=100, value=70)
@@ -50,6 +58,9 @@ def main():
         
         prediction = predict_data(user_data)  # Get prediction result
         st.success(f"Your predicted score is: {prediction}")  # Display the prediction
+        user_data['prediction'] = prediction
+        user_data = {key: int(value) if isinstance(value, np.integer) else float(value) if isinstance(value, np.floating) else value for key, value in user_data.items()}
+        collection.insert_one(user_data)
 
 # Run the app
 if __name__ == "__main__":
